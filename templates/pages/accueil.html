@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIM-Recours</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+        --primary-color: #4f46e5;
+        --primary-dark: #3730a3;
+        --success-color: #16a34a;
+        --danger-color: #dc2626;
+        --warning-color: #f59e0b;
+        --bg-light: #f0f4ff;
+        --bg-dark: #d3c9f3;
+        --bg-main: #5c93f8;
+        --text-light: #fff;
+        --text-dark: #1f2937;
+    }
+
+    body {
+        background: var(--bg-main);
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    #accueil {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    /* Message */
+    #accueil .message {
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    #accueil .message h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: var(--text-light);
+        animation: slideDown 1s ease forwards;
+    }
+
+    #accueil .message p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #f1f5f9;
+        opacity: 0;
+        animation: fadeInText 2s 0.5s forwards;
+    }
+
+    /* Cartes liens */
+    #accueil .liens {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    #accueil .liens div {
+        flex: 1 1 30%;
+        background: var(--text-light);
+        color: var(--text-dark);
+        border-radius: 12px;
+        padding: 25px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        cursor: pointer;
+        animation: fadeIn 1s ease forwards;
+    }
+
+    #accueil .liens div:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        background: var(--bg-light);
+    }
+
+    #accueil .liens div img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 2px dotted #d1d5db;
+        margin-bottom: 15px;
+    }
+
+    #accueil .liens div p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    #accueil .liens div a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary-color);
+        color: var(--text-light);
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    #accueil .liens div a:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 900px) {
+        #accueil .liens {
+            flex-direction: column;
+            align-items: center;
+        }
+        #accueil .liens div {
+            width: 80%;
+            margin-bottom: 20px;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        #accueil .message h1 {
+            font-size: 2.2rem;
+        }
+        #accueil .message p {
+            font-size: 1rem;
+        }
+        #accueil .liens div img {
+            width: 70px;
+            height: 70px;
+        }
+        #accueil .liens div a {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInText {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+</head>
+<body>
+<main>
+<section id="accueil">
+    <div class="message">
+        <h1>Bienvenue sur UNIM-Recours</h1>
+        <p>Gestion simple et efficace des recours universitaires pour les étudiants et les membres du jury. 
+        Inscrivez-vous, connectez-vous et commencez à suivre vos démarches rapidement et en toute sécurité.</p>
+    </div>
+
+    <div class="liens">
+        <div id="register1">
+            <img src="{% static 'icons/etu.webp' %}" alt="Etudiant">
+            <p>Tous les étudiants s'inscrivent ici</p>
+            <a href="{% url 'register_etudiant' %}">
+                <i class="fa-solid fa-user-plus"></i> S'inscrire
+            </a>
+        </div>
+
+        <div id="register2">
+            <img src="{% static 'icons/etu.webp' %}" alt="Jury">
+            <p>Tous les membres du jury s'inscrivent ici</p>
+            <a href="{% url 'register_jury' %}">
+                <i class="fa-solid fa-user-plus"></i> S'inscrire
+            </a>
+        </div>
+
+        <div id="login">
+            <img src="{% static 'icons/etu.webp' %}" alt="Login">
+            <p>Si vous êtes déjà inscrit, connectez-vous ici</p>
+            <a href="{% url 'login' %}">
+                <i class="fa-solid fa-right-to-bracket"></i> Se connecter
+            </a>
+        </div>
+    </div>
+</section>
+</main>
+</body>
+</html>

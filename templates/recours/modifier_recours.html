@@ -1,0 +1,111 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<!-- Bloc messages Django -->
+{% if messages %}
+<div id="django-messages" style="
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+">
+    {% for message in messages %}
+        <div class="toast {{ message.tags }}" style="
+            background-color: {% if message.tags == 'error' %}#ff4d4d{% else %}#4CAF50{% endif %};
+            color: white; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            min-width: 250px;
+            text-align: center;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    const toasts = document.querySelectorAll('#django-messages .toast');
+    toasts.forEach((t) => {
+        setTimeout(() => {
+            t.style.transition = "opacity 0.5s, transform 0.5s";
+            t.style.opacity = "0";
+            t.style.transform = "translateY(-20px)";
+            setTimeout(() => t.remove(), 500);
+        }, 5000);
+    });
+</script>
+{% endif %}
+
+<style>
+    
+    .formulaire{
+        background-color: var(--var-bg-light);
+        box-shadow: 0px 0px 5px var(--var-text-color-dark);
+        padding: 10px;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+    .formulaire form label{
+        color: var(--var-text-color-dark);
+    }
+
+    .formulaire form input{
+            width: 100%;
+            border: solid 1px var(--var-secondary-color);
+            padding: 4px;
+            background: rgba(245, 237, 237, 0.493);
+            outline: none;
+            margin-top: 10px;
+            height: 25px;
+        }
+
+    .formulaire form textarea{
+            width: 100%;
+            border: solid 1px var(--var-secondary-color);
+            padding: 15px;
+            background: rgba(245, 237, 237, 0.493);
+            outline: none;
+            margin-top: 10px;
+            height: 100%;
+            font-size: 15px;
+        }
+
+    .formulaire form button{
+        background: blue; 
+        color:white; 
+        padding:10px 20px; 
+        border:none; 
+        border-radius:6px; 
+        cursor:pointer;
+    }
+</style>
+
+ <div class="formulaire">
+         <form method="post" enctype="multipart/form-data" style="margin-top:15px;">
+                {% csrf_token %}
+                
+                <label for="id_objet">📌 Objet :</label><br>
+                {{ form.objet }} <br><br>
+
+                <label for="id_message">📝 Message :</label><br>
+                {{ form.message }} <br><br>
+
+                <label for="id_fichier_joint">📂 Fichier joint (facultatif) :</label><br>
+                {{ form.fichier_joint }} <br><br>
+
+                <button type="submit">
+                    Envoyer
+                </button>
+        </form>
+       </div>
+
+{% endblock %}

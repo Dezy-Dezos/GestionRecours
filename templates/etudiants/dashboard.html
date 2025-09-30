@@ -1,0 +1,41 @@
+<h1>Bienvenue {{ etudiant.user.nom_complet }}</h1>
+<p>Département : {{ etudiant.departement.nom }} | Domaine : {{ etudiant.departement.domaine.nom }}</p>
+<p>Promotion : {{ etudiant.promotion }}</p>
+
+{% if delai_actif %}
+<h3>⏱️ Délai en cours : {{ delai_actif.titre }}</h3>
+<div id="chrono"></div>
+<a href="{% url 'creer_recours' %}"><button>Envoyer un recours</button></a>
+
+<script>
+const dateFin = new Date("{{ delai_actif.date_fin|date:'Y-m-d\\TH:i:s' }}");
+
+function updateChrono() {
+    const now = new Date();
+    const totalSec = Math.floor((dateFin - now)/1000);
+    if(totalSec <= 0){
+        document.getElementById('chrono').textContent = "00:00:00";
+    } else {
+        const h = String(Math.floor(totalSec/3600)).padStart(2,'0');
+        const m = String(Math.floor((totalSec%3600)/60)).padStart(2,'0');
+        const s = String(totalSec%60).padStart(2,'0');
+        document.getElementById('chrono').textContent = `${h}:${m}:${s}`;
+    }
+}
+
+setInterval(updateChrono,1000);
+updateChrono();
+</script>
+
+{% else %}
+<p>Aucun délai actif pour votre domaine.</p>
+{% endif %}
+
+<h2>Mes recours</h2>
+<ul>
+{% for r in recours %}
+  <li>{{ r.objet }} - {{ r.statut }} - {{ r.date_envoi|date:"d/m/Y H:i" }}</li>
+{% empty %}
+  <li>Aucun recours soumis.</li>
+{% endfor %}
+</ul>

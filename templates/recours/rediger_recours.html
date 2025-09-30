@@ -1,0 +1,244 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+<style>
+html {
+    --var-secondary-color: #6e51cf;
+    --var-text-color: #fff;
+    --var-text-color-dark: #333;
+    --var-bg-light: #f8f9fa;
+    --var-bg-dark: #d3c9f3;
+    --unim--1: rgb(160, 8, 8);
+    --unim--2: rgb(163, 163, 7);
+    --bg--vrai: rgb(92, 147, 248);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container flex */
+.redaction {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 2rem auto;
+    flex-wrap: wrap;
+}
+
+/* Formulaire */
+.formulaire {
+    background-color: var(--var-bg-light);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.formulaire:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.formulaire form label {
+    color: var(--var-text-color-dark);
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+}
+
+.formulaire form input,
+.formulaire form textarea {
+    width: 100%;
+    border: 1px solid var(--var-secondary-color);
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 6px;
+    outline: none;
+    font-size: 14px;
+    background: #fff;
+    transition: border-color 0.2s ease;
+}
+.formulaire form input:focus,
+.formulaire form textarea:focus {
+    border-color: var(--bg--vrai);
+}
+
+.formulaire form button {
+    background: var(--bg--vrai);
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 15px;
+    transition: background 0.2s ease;
+}
+.formulaire form button:hover {
+    background: #5c93f8;
+}
+
+/* Chrono */
+.chrono {
+    background-color: var(--var-bg-light);
+    width: 30%;
+    min-width: 250px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chrono:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+#countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+#countdown .J, .H, .M, .S {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#countdown strong {
+    background: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    min-width: 50px;
+    text-align: center;
+}
+
+#countdown span.label {
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bg--vrai);
+}
+
+/* Progress bar */
+.progress-bar {
+    width: 100%;
+    background: #eee;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+.progress-bar div {
+    height: 20px;
+    width: 100%;
+    background: green;
+    border-radius: 8px;
+    transition: width 1s linear, background 1s;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .redaction {
+        flex-direction: column-reverse;
+        width: 95%;
+        margin: 1rem auto;
+    }
+    .formulaire, .chrono {
+        width: 100%;
+        margin: 0 auto;
+    }
+    #countdown {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    #countdown strong {
+        min-width: 40px;
+        font-size: 1.2rem;
+    }
+}
+</style>
+
+{% if form %}
+<div class="redaction">
+    <div class="formulaire">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="id_objet"><i class="fas fa-thumbtack"></i> Objet :</label>
+            {{ form.objet }}
+
+            <label for="id_message"><i class="fas fa-pen"></i> Message :</label>
+            {{ form.message }}
+
+            <label for="id_fichier_joint"><i class="fas fa-paperclip"></i> Fichier joint (facultatif) :</label>
+            {{ form.fichier_joint }}
+
+            <button type="submit"><i class="fas fa-paper-plane"></i> Envoyer</button>
+        </form>
+    </div>
+
+    <div class="chrono">
+        <p><i class="fas fa-hourglass-half"></i> Temps restant :</p>
+        <div id="countdown">
+            <div class="J"><strong id="J1">00</strong> <span class="label">Jours</span></div> 
+            <div class="H"><strong id="H1">00</strong> <span class="label">Heures</span></div> 
+            <div class="M"><strong id="M1">00</strong> <span class="label">Minutes</span></div> 
+            <div class="S"><strong id="S1">00</strong> <span class="label">Secondes</span></div>
+        </div>
+        <div class="progress-bar">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const deadline = new Date("{{ delai.date_fin|date:'Y-m-d H:i:s' }}").getTime();
+const start = new Date("{{ delai.date_debut|date:'Y-m-d H:i:s' }}").getTime();
+const progressBar = document.getElementById("progress-bar");
+
+const jElem = document.getElementById("J1");
+const hElem = document.getElementById("H1");
+const mElem = document.getElementById("M1");
+const sElem = document.getElementById("S1");
+
+const x = setInterval(function() {
+    const now = new Date().getTime();
+    const t = deadline - now;
+    const total = deadline - start;
+    const elapsed = now - start;
+
+    if (t <= 0) {
+        clearInterval(x);
+        jElem.textContent = "00";
+        hElem.textContent = "00";
+        mElem.textContent = "00";
+        sElem.textContent = "00";
+        progressBar.style.width = "0%";
+        progressBar.style.background = "gray";
+        document.querySelector("form button").disabled = true;
+        document.querySelector("form button").style.background = "gray";
+    } else {
+        const days = Math.floor(t / (1000*60*60*24));
+        const hours = Math.floor((t % (1000*60*60*24)) / (1000*60*60));
+        const minutes = Math.floor((t % (1000*60*60)) / (1000*60));
+        const seconds = Math.floor((t % (1000*60)) / 1000);
+
+        jElem.textContent = String(days).padStart(2, "0");
+        hElem.textContent = String(hours).padStart(2, "0");
+        mElem.textContent = String(minutes).padStart(2, "0");
+        sElem.textContent = String(seconds).padStart(2, "0");
+
+        const progress = Math.max(0, 100 - (elapsed/total)*100);
+        progressBar.style.width = progress + "%";
+
+        if(progress>60){ progressBar.style.background="green"; }
+        else if(progress>30){ progressBar.style.background="orange"; }
+        else{ progressBar.style.background="red"; }
+    }
+},1000);
+</script>
+{% endif %}
+{% endblock %}

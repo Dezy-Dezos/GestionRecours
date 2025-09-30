@@ -1,0 +1,117 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .profile-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-field {
+            margin-bottom: 15px;
+        }
+        .profile-field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .profile-field span {
+            display: block;
+            padding: 8px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .profile-photo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-photo img {
+            max-width: 150px;
+            border-radius: 50%;
+        }
+        .edit-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .edit-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Mon Profil</h2>
+        <div class="profile-photo">
+            {% if user.profile.photo_profil %}
+                <img src="{{ user.profile.photo_profil.url }}" alt="Photo de profil">
+            {% else %}
+                <img src="{% static 'assets/default_profile.png' %}" alt="Photo de profil par défaut">
+            {% endif %}
+        </div>
+        <div class="profile-field">
+            <label>Nom:</label>
+            <span>{{ user.last_name }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Prénom:</label>
+            <span>{{ user.first_name }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Autre nom:</label>
+            <span>{{ user.profile.autre_nom }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Email:</label>
+            <span>{{ user.email }}</span>
+        </div>
+        {% if user.profile.is_jury %}
+        <div class="profile-field">
+            <label>Domaine:</label>
+            <span>{{ user.profile.domaine }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Fonction:</label>
+            <span>{{ user.profile.fonction }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Téléphone:</label>
+            <span>{{ user.profile.telephone }}</span>
+        </div>
+        {% else %}
+        <div class="profile-field">
+            <label>Département:</label>
+            <span>{{ user.profile.departement }}</span>
+        </div>
+        <div class="profile-field">
+            <label>Promotion:</label>
+            <span>{{ user.promotion }}</span>
+        </div>
+        {% endif %}
+        <a href="" class="edit-button">Éditer le profil</a>
+    </div>
+</body>
+</html>
+</body>
+</html>
+{% endblock %}

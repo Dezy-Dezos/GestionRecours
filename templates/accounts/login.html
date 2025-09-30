@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion</title>
+    <style>
+       html {
+        --var-bg-color: rgb(92, 147, 248);
+        --var-secondary-color: #6e51cf;
+        --var-text-color: #fff;
+        --var-text-color-dark: #333;
+        --var-bg-light: #f0f4ff;
+        --var-bg-dark: #d3c9f3;
+        --unim--1: rgb(160, 8, 8);
+        --unim--2: rgb(163, 163, 7);
+    }
+
+    body {
+        background: var(--var-bg-light);
+        color: var(--var-text-color-dark);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .login {
+        background-color: var(--var-bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+
+    .login h2 {
+        color: var(--var-text-color);
+        font-size: 2em;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    form {
+        background: var(--var-text-color);
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 2rem;
+        padding: 25px;
+        border-radius: 6px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+        box-sizing: border-box; /* ✅ équilibre les paddings */
+    }
+
+    .msg {
+        color: var(--var-text-color-dark);
+        font-size: 15px;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    form label {
+        font-weight: bold;
+        display: block;
+        margin-top: 12px;
+        color: var(--var-text-color-dark);
+    }
+
+    form input {
+        width: 100%;
+        border: solid 1px var(--var-secondary-color);
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 6px;
+        background: rgba(245, 237, 237, 0.493);
+        outline: none;
+        font-size: 14px;
+        box-sizing: border-box; /* ✅ empêche de déborder */
+    }
+
+    .errorlist {
+        color: red;
+        font-size: 13px;
+        margin: 4px 0;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    form button {
+        border: none;
+        width: 100%;
+        background-color: blue;
+        padding: 12px;
+        color: var(--var-bg-light);
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 15px;
+        margin-top: 15px;
+        transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+        background-color: var(--var-secondary-color);
+    }
+
+    ul {
+        color: red;
+        font-size: 14px;
+        margin: 8px 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .question {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        font-size: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .question p, .question a {
+        color: var(--var-secondary-color);
+    }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <h2>Connexion</h2>
+
+        <form method="post" novalidate>
+            <p class="msg">Identifiez-vous ici pour accéder à la page suivante</p>
+
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% csrf_token %}
+            <label for="id_username">Nom d'utilisateur :</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+
+            <label for="id_password">Mot de passe :</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+
+            <button type="submit">Se connecter</button>
+
+            <div class="question">
+                <p>Vous n'êtes pas inscrit ?</p>
+                <a href="{% url 'accueil' %}"><i>Inscrivez-vous ici</i></a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

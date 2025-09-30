@@ -1,0 +1,11 @@
+{% extends "accounts/staff_dashboard.html" %}
+{% block content %}
+<h2>🗑️ Supprimer un département</h2>
+<p>Voulez-vous vraiment supprimer le département <strong>{{ departement.nom }}</strong> ?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-delete">✅ Oui, supprimer</button>
+    <a href="{% url 'liste_departements' %}" class="btn btn-edit">❌ Annuler</a>
+</form>
+{% endblock %}

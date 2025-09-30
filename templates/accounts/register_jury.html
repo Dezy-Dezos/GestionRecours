@@ -1,0 +1,201 @@
+<style>
+    html {
+        --var-bg-color: rgb(92, 147, 248);
+        --var-secondary-color: #6e51cf;
+        --var-text-color: #fff;
+        --var-text-color-dark: #333;
+        --var-bg-light: #f0f4ff;
+        --var-bg-dark: #d3c9f3;
+        --unim--1: rgb(160, 8, 8);
+        --unim--2: rgb(163, 163, 7);
+    }
+
+    body {
+        color: var(--var-text-color-dark);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--var-bg-color);
+        min-height: 100vh;
+    }
+
+    .register {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+    }
+
+    .register h2 {
+        color: var(--var-text-color);
+        font-size: 2em;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    form {
+        background: var(--var-text-color);
+        width: 100%;
+        max-width: 800px;
+        padding: 25px;
+        border-radius: 6px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+    }
+
+    .msg {
+        color: var(--var-text-color-dark);
+        font-size: 15px;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    form label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+
+    form input, form select {
+        width: 100%;
+        border: solid 1px var(--var-secondary-color);
+        padding: 8px;
+        background: rgba(245, 237, 237, 0.493);
+        outline: none;
+        margin-top: 6px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .errorlist {
+        color: red;
+        font-size: 13px;
+        margin: 4px 0;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    form button {
+        border: none;
+        background-color: blue;
+        color: var(--var-text-color);
+        padding: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        width: 100%;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: var(--var-secondary-color);
+    }
+
+    .question {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        font-size: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .question p, .question a {
+        color: var(--var-secondary-color);
+    }
+
+    #inputs {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .inputs1, .inputs2 {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        form {
+            padding: 15px;
+        }
+        #inputs {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="register">
+    <h2>Inscription Jury</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        <p class="msg">Ce formulaire est réservé aux membres du jury. 
+            Si vous êtes étudiant, <a href="{% url 'register_etudiant' %}">Inscrivez-vous ici</a>
+        </p>
+
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% csrf_token %}
+
+        <div id="inputs">
+            <div class="inputs1">
+                <label for="id_username">Matricule :</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+
+                <label for="id_first_name">Nom :</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+
+                <label for="id_last_name">Post-nom :</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+
+                <label for="id_autre_nom">Prénom :</label>
+                {{ form.autre_nom }}
+                {{ form.autre_nom.errors }}
+
+                <label for="id_email">Email :</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="inputs2">
+                <label for="id_domaine">Domaine :</label>
+                {{ form.domaine }}
+                {{ form.domaine.errors }}
+
+                <label for="id_fonction">Fonction :</label>
+                {{ form.fonction }}
+                {{ form.fonction.errors }}
+
+                <label for="id_password1">Mot de passe :</label>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+
+                <label for="id_password2">Confirmer le mot de passe :</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+
+                <label for="id_photo_profil">Photo de profil (optionnel) :</label>
+                {{ form.photo_profil }}
+                {{ form.photo_profil.errors }}
+            </div>
+        </div>
+
+        <button type="submit">S'inscrire</button>
+
+        <div class="question">
+            <p>Vous avez déjà un compte ?</p>
+            <a href="{% url 'login' %}">Connectez-vous ici</a>
+        </div>
+    </form>
+</div>

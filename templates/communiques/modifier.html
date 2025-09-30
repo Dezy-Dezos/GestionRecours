@@ -1,0 +1,11 @@
+{% extends "jury/base.html" %}
+{% block content %}
+<h2>✏️ Modifier communiqué</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-edit">💾 Sauvegarder</button>
+    <a href="{% url 'liste_communiques' %}" class="btn btn-delete">❌ Annuler</a>
+</form>
+{% endblock %}

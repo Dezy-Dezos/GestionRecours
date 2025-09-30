@@ -1,0 +1,253 @@
+{% extends "jury/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --color-primary: #4f46e5;
+        --color-primary-dark: #3730a3;
+        --color-success: #16a34a;
+        --color-danger: #dc2626;
+        --color-warning: #f59e0b;
+        --color-light: #f9fafb;
+        --color-dark: #1f2937;
+    }
+
+    .redaction {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 2rem;
+        margin-top: 30px;
+    }
+
+    .formulaire, .chrono {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .formulaire { flex: 2; }
+    .chrono { flex: 1; text-align: center; }
+
+    @media screen and (max-width: 768px) {
+        .redaction { flex-direction: column; gap: 1.5rem; }
+        .formulaire, .chrono { width: 100%; }
+    }
+
+    .formulaire h2, .chrono h2, .formulaire h3 {
+        margin-bottom: 15px;
+        color: var(--color-dark);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .formulaire input, .formulaire select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        background: var(--color-light);
+        font-size: 14px;
+        transition: border 0.3s;
+    }
+    .formulaire input:focus, .formulaire select:focus {
+        border-color: var(--color-primary);
+        outline: none;
+        background: #fff;
+    }
+
+    .formulaire button {
+        background: var(--color-primary);
+        color: white;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .formulaire button:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .btn-edit, .btn-delete {
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .btn-edit { background: var(--color-warning); color: white; }
+    .btn-edit:hover { background: #d97706; transform: translateY(-2px); }
+    .btn-delete { background: var(--color-danger); color: white; }
+    .btn-delete:hover { background: #b91c1c; transform: translateY(-2px); }
+
+    /* ---- Countdown ---- */
+    #countdown {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+    #countdown div { display: flex; flex-direction: column; align-items: center; }
+    #countdown strong {
+        background: var(--color-light);
+        color: var(--color-dark);
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        min-width: 60px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    #countdown span.label {
+        font-size: 12px;
+        margin-top: 5px;
+        color: var(--color-primary);
+        font-weight: 500;
+    }
+
+    .progress-bar {
+        width: 100%;
+        background: #e5e7eb;
+        border-radius: 10px;
+        height: 14px;
+        overflow: hidden;
+    }
+    .progress-bar div {
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        transition: width 1s linear, background 1s;
+    }
+</style>
+
+<div class="redaction">
+    <!-- Formulaire -->
+    <div class="formulaire">
+        <h2><i class="fa-solid fa-calendar-plus"></i> Créer un délai</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"><i class="fa-solid fa-plus"></i> Ajouter</button>
+        </form>
+
+        <hr>
+        <h3><i class="fa-solid fa-clipboard-list"></i> Dernier délai ajouté</h3>
+        {% if dernier_delai %}
+            <p>
+                <strong>{{ dernier_delai.titre }}</strong> :  
+                {{ dernier_delai.date_debut }} → {{ dernier_delai.date_fin }}
+            </p>
+            <div class="actions">
+                <a href="{% url 'modifier_delai' dernier_delai.pk %}" class="btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Modifier
+                </a>
+                <a href="{% url 'supprimer_delai' dernier_delai.pk %}" class="btn-delete" 
+                   onclick="return confirm('Voulez-vous vraiment supprimer ce délai ?')">
+                   <i class="fa-solid fa-trash"></i> Supprimer
+                </a>
+            </div>
+        {% else %}
+            <p style="color: var(--color-dark);">Aucun délai défini.</p>
+        {% endif %}
+    </div>
+
+    <!-- Chrono -->
+    <div class="chrono">
+        <h2><i class="fa-solid fa-hourglass-half"></i> Temps du dernier délai</h2>
+        {% if dernier_delai %}
+            <div id="countdown">
+                <div><strong id="J">00</strong><span class="label">Jours</span></div>
+                <div><strong id="H">00</strong><span class="label">Heures</span></div>
+                <div><strong id="M">00</strong><span class="label">Minutes</span></div>
+                <div><strong id="S">00</strong><span class="label">Secondes</span></div>
+            </div>
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+        {% else %}
+            <p style="color: var(--color-dark);">
+                <i class="fa-solid fa-circle-exclamation"></i> Aucun délai défini
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% if dernier_delai %}
+<script>
+    const start = new Date("{{ dernier_delai.date_debut|date:'Y-m-d H:i:s' }}").getTime();
+    const deadline = new Date("{{ dernier_delai.date_fin|date:'Y-m-d H:i:s' }}").getTime();
+
+    const jElem = document.getElementById("J");
+    const hElem = document.getElementById("H");
+    const mElem = document.getElementById("M");
+    const sElem = document.getElementById("S");
+    const progressEl = document.getElementById("progress");
+
+    function updateChrono() {
+        const now = new Date().getTime();
+        const total = deadline - start;
+        const t = deadline - now;
+
+        if (t <= 0) {
+            jElem.textContent = "00";
+            hElem.textContent = "00";
+            mElem.textContent = "00";
+            sElem.textContent = "00";
+            progressEl.style.width = "100%";
+            progressEl.style.background = "gray";
+        } else if (now < start) {
+            // avant le début du délai
+            jElem.textContent = "00";
+            hElem.textContent = "00";
+            mElem.textContent = "00";
+            sElem.textContent = "00";
+            progressEl.style.width = "0%";
+            progressEl.style.background = "blue";
+        } else {
+            // pendant le délai
+            const days = Math.floor(t / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+            jElem.textContent = String(days).padStart(2, "0");
+            hElem.textContent = String(hours).padStart(2, "0");
+            mElem.textContent = String(minutes).padStart(2, "0");
+            sElem.textContent = String(seconds).padStart(2, "0");
+
+            const elapsed = now - start;
+            const progress = Math.min(100, (elapsed / total) * 100);
+            progressEl.style.width = progress + "%";
+
+            if (progress < 50) {
+                progressEl.style.background = "green";
+            } else if (progress < 80) {
+                progressEl.style.background = "orange";
+            } else {
+                progressEl.style.background = "red";
+            }
+        }
+    }
+
+    setInterval(updateChrono, 1000);
+    updateChrono();
+</script>
+{% endif %}
+{% endblock %}

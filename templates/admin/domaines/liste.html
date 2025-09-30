@@ -1,0 +1,118 @@
+{% extends "accounts/staff_dashboard.html" %}
+{% block content %}
+<style>
+    h2 {
+        color: var(--bg--vrai);
+        margin-bottom: 1.2rem;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: background 0.3s ease;
+    }
+    .btn-add {
+        background: #4CAF50;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    .btn-add:hover { background: #43a047; }
+
+    .btn-edit {
+        background: #f59e0b;
+        color: white;
+    }
+    .btn-edit:hover { background: #d97706; }
+
+    .btn-delete {
+        background: #e11d48;
+        color: white;
+    }
+    .btn-delete:hover { background: #be123c; }
+
+    table {
+        width: 60%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    thead {
+        background: var(--bg--vrai);
+        color: white;
+    }
+
+    th, td {
+        padding: 10px 14px;
+        text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background: #f1f5ff;
+    }
+
+    td.actions {
+        display: flex;
+        gap: 6px;
+    }
+
+    p.empty {
+        text-align:center;
+        color: var(--unim--1);
+        font-weight: bold;
+        margin-top: 2rem;
+    }
+</style>
+
+<h2><i class="fa-solid fa-layer-group"></i> Domaines</h2>
+
+<div style="text-align:center;">
+    <a href="{% url 'ajouter_domaine' %}" class="btn btn-add">
+        <i class="fa-solid fa-plus"></i> Ajouter un domaine
+    </a>
+</div>
+
+{% if domaines %}
+<table>
+    <thead>
+        <tr>
+            <th><i class="fa-solid fa-bookmark"></i> Nom</th>
+            <th style="width: 160px;"><i class="fa-solid fa-gear"></i> Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in domaines %}
+        <tr>
+            <td>{{ d.nom }}</td>
+            <td class="actions">
+                <a href="{% url 'modifier_domaine' d.pk %}" class="btn btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <a href="{% url 'supprimer_domaine' d.pk %}" class="btn btn-delete"
+                   onclick="return confirm('Voulez-vous vraiment supprimer ce domaine ?')">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="empty"><i class="fa-solid fa-circle-exclamation"></i> Aucun domaine trouvé.</p>
+{% endif %}
+{% endblock %}

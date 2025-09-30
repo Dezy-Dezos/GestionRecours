@@ -1,0 +1,79 @@
+{% extends "pages/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .detail-container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .detail-container h2 {
+        color: var(--bg--vrai);
+        text-align: center;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+    .detail-group { margin-bottom: 18px; }
+    .detail-label { font-weight: bold; color: var(--var-secondary-color); margin-bottom: 6px; display: block; }
+    .detail-value {
+        background: var(--var-bg-light);
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+    .status {
+        display: inline-block; padding: 6px 12px; border-radius: 8px;
+        font-weight: bold; font-size: 0.9rem;
+    }
+    .status.en_attente { background: #f59e0b; color: white; }
+    .status.accepte { background: #16a34a; color: white; }
+    .status.rejete { background: #dc2626; color: white; }
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #6b7280; color: white; padding: 8px 16px;
+        border-radius: 8px; text-decoration: none; font-weight: bold;
+    }
+    .btn-back:hover { background: #4b5563; }
+</style>
+
+<div class="detail-container">
+    <h2><i class="fas fa-file-alt"></i> Mon recours</h2>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-tag"></i> Objet :</span>
+        <div class="detail-value">{{ recours.objet }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-envelope"></i> Message :</span>
+        <div class="detail-value">{{ recours.message|linebreaks }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-calendar"></i> Date d’envoi :</span>
+        <div class="detail-value">{{ recours.date_envoi|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-info-circle"></i> Statut :</span>
+        <div class="detail-value">
+            <span class="status {{ recours.statut|lower }}">{{ recours.get_statut_display }}</span>
+        </div>
+    </div>
+
+    {% if recours.decision %}
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-gavel"></i> Décision du jury :</span>
+        <div class="detail-value">{{ recours.decision|linebreaks }}</div>
+    </div>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> Retour</a>
+</div>
+{% endblock %}

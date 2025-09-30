@@ -1,0 +1,74 @@
+{% extends "jury/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.titre {
+    display: flex;
+    align-items: center;
+    color: var(--var-text-color);
+    background-color: var(--unim--1);
+    width: 100%;
+    height: 10vh;
+    padding-left: 20px;
+    border-radius: 6px;
+}
+.titre h2 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.content1 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 20px;
+}
+.content1 div {
+    background: var(--var-bg-light);
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform .2s, background .3s;
+}
+.content1 div:hover {
+    transform: translateY(-5px);
+    background: var(--var-bg-dark);
+}
+.content1 a {
+    text-decoration: none;
+    color: var(--var-text-color-dark);
+    font-size: 18px;
+    font-weight: bold;
+}
+</style>
+
+<!-- Bandeau titre -->
+<div class="titre">
+    <h2>Tableau de bord</h2>
+</div>
+
+<!-- Liens rapides -->
+<div class="content1">
+    
+    <div class="delais">
+        <a href="{% url 'creer_delais' %}"><i class="fas fa-clock "></i>Définir un délais</a>
+    </div>
+
+    <div class="cmnq">
+        <a href="{% url 'liste_communiques' %}"><i class="fas fa-bullhorn"></i> Communiqués</a>
+    </div>
+
+    <div class="mes_recours">
+        <a href="{% url 'tous_les_recours' %}"><i class="fas fa-folder-open"></i> Recours à traiter</a>
+    </div>
+
+    <div class="notif">
+        <a href="{% url 'mes_notifications' %}">
+            <i class="fas fa-bell"></i> Notifications
+        </a>
+    </div>
+</div>
+{% endblock %}

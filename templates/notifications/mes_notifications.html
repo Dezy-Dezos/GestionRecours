@@ -1,0 +1,145 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Mes notifications{% endblock %}
+
+{% block content %}
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+        color: #4f46e5; /* couleur principale */
+    }
+
+    ul.notifications {
+        list-style: none;
+        padding: 0;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    ul.notifications li {
+        background: #f0f4ff;
+        margin-bottom: 12px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        position: relative;
+
+        /* Animation */
+        opacity: 0;
+        transform: translateX(-20px);
+        animation: slide-in 0.5s forwards;
+    }
+
+    /* Animation keyframes */
+    @keyframes slide-in {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Stagger animation for each li */
+    ul.notifications li:nth-child(1) { animation-delay: 0.1s; }
+    ul.notifications li:nth-child(2) { animation-delay: 0.2s; }
+    ul.notifications li:nth-child(3) { animation-delay: 0.3s; }
+    ul.notifications li:nth-child(4) { animation-delay: 0.4s; }
+    ul.notifications li:nth-child(5) { animation-delay: 0.5s; }
+    ul.notifications li:nth-child(6) { animation-delay: 0.6s; }
+    /* Ajoute plus de delay si nécessaire */
+
+    ul.notifications li:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        background: #e0ebff;
+    }
+
+    ul.notifications li.unread {
+        background: #e0e7ff; /* notification non lue */
+    }
+
+    ul.notifications li strong {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        color: #1f2937;
+    }
+
+    ul.notifications li small {
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    ul.notifications li a {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 6px 12px;
+        background: #4f46e5;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    ul.notifications li a:hover {
+        background: #3730a3;
+        transform: translateY(-1px);
+    }
+
+    .notif-badge {
+        background: #dc2626;
+        color: white;
+        font-size: 12px;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        padding: 3px 7px;
+        border-radius: 50%;
+        font-weight: bold;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .notif-badge.zero {
+        display: none;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 600px) {
+        ul.notifications li {
+            padding: 12px 15px;
+        }
+
+        ul.notifications li strong {
+            font-size: 1rem;
+        }
+
+        ul.notifications li a {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+        }
+    }
+</style>
+
+<h2><i class="fa-solid fa-bell"></i> Mes notifications</h2>
+
+{% if notifications %}
+    <ul class="notifications">
+        {% for notif in notifications %}
+            <li class="{% if not notif.lu %}unread{% endif %}">
+                <strong>{{ notif.message }}</strong>
+                <small>{{ notif.date_creation|date:"d/m/Y H:i" }}</small>
+                {% if user.etudiant_profile %}
+                    <a href="{% url 'creer_recours' %}"><i class="fa-solid fa-pen"></i> Rédigez votre recours</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p style="text-align:center; margin-top: 20px; color: #6b7280;">Aucune notification pour le moment.</p>
+{% endif %}
+{% endblock %}

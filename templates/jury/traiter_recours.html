@@ -1,0 +1,120 @@
+{% extends "jury/base.html" %}
+{% load static %}
+
+{% block title %}Traiter un recours{% endblock %}
+
+
+{% block content %}
+<style>
+    html {
+        --var-secondary-color: #6e51cf;
+        --var-text-color: #fff;
+        --var-text-color-dark: #333;
+        --var-bg-light: #f0f4ff;
+        --var-bg-dark: #d3c9f3;
+        --unim--1: rgb(160, 8, 8);
+        --unim--2: rgb(163, 163, 7);
+        --bg--vrai: rgb(92, 147, 248);
+    }
+
+    .form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .form-container form {
+        background-color: var(--var-bg-light);
+        padding: 25px 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-container label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-container input,
+    .form-container textarea,
+    .form-container select {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--var-secondary-color);
+        border-radius: 6px;
+        background: rgba(245, 237, 237, 0.5);
+        outline: none;
+        font-size: 1rem;
+    }
+
+    .form-container button {
+        background-color: var(--var-secondary-color);
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+    }
+
+    .form-container button:hover {
+        background-color: #5a3ed9;
+    }
+
+    .form-error {
+        background-color: #ffcccc;
+        color: #a30000;
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+
+    .field-error {
+        color: #a30000;
+        font-size: 0.85rem;
+        margin-top: 3px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .form-container form {
+            width: 90%;
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit">Enregistrer la décision</button>
+    </form>
+</div>
+{% endblock content %}

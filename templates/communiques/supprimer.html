@@ -1,0 +1,11 @@
+{% extends "jury/base.html" %}
+{% block content %}
+<h2>🗑️ Supprimer communiqué</h2>
+<p>Voulez-vous vraiment supprimer <strong>{{ communique.titre }}</strong> ?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-delete">✅ Oui, supprimer</button>
+    <a href="{% url 'liste_communiques' %}" class="btn btn-edit">❌ Annuler</a>
+</form>
+{% endblock %}

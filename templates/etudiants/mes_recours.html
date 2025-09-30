@@ -1,0 +1,118 @@
+{% extends "pages/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 12px;
+    }
+
+    th {
+        background-color: var(--bg--vrai);
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Boutons */
+    .btn-edit, .btn-delete {
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 5px;
+        transition: background 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-edit {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #45a049;
+    }
+
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #da190b;
+    }
+
+    .btn-view {
+    background-color: #2563eb; /* bleu */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-view:hover {
+    background-color: #1d4ed8;
+}
+
+</style>
+
+
+<h2>Mes recours</h2>
+
+{% if recours %}
+<table>
+    <tr>
+        <th>Objet</th>
+        <th>Date</th>
+        <th>Statut</th>
+        <th>Actions</th>
+    </tr>
+    {% for r in recours %}
+    <tr>
+        <td>{{ r.objet }}</td>
+        <td>{{ r.date_envoi|date:"d/m/Y H:i" }}</td>
+        <td>{{ r.statut }}</td>
+        <td>
+    <!-- Voir détails -->
+            <a href="{% url 'detail_recours_etudiant' r.pk %}" class="btn-view"
+            title="Voir les détails">
+            <i class="fas fa-eye"></i>
+            </a>
+
+    <!-- Modifier -->
+            <a href="{% url 'modifier_recours' r.pk %}" class="btn-edit" title="Modifier">
+                <i class="fas fa-pencil-alt"></i> 
+            </a>
+
+    <!-- Supprimer -->
+            <a href="{% url 'supprimer_recours' r.pk %}" class="btn-delete" title="Supprimer"
+            onclick="return confirm('Voulez-vous vraiment supprimer ce recours ?')">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+</td>
+
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Aucun recours</p>
+{% endif %}
+{% endblock content %}

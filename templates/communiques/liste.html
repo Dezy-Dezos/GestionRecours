@@ -1,0 +1,158 @@
+{% extends base_template %}
+
+{% block content %}
+<div class="communique-list">
+    <h2><i class="fas fa-clipboard-list"></i> Liste des communiqués</h2>
+
+    {% for comm in communiques %}
+        <div class="comm-card">
+            <h3><i class="fas fa-bullhorn"></i> {{ comm.titre }}</h3>
+            <p class="comm-meta">
+                <i class="fas fa-tag"></i>
+                {% if comm.est_global %}
+                    <span class="badge-global">Général</span>
+                {% else %}
+                    <span class="badge-domaine">{{ comm.domaine.nom }}</span>
+                {% endif %}
+            </p>
+            <p class="comm-meta">
+                <i class="fas fa-user"></i> {{ comm.auteur.nom_complet }}
+                &nbsp; | &nbsp;
+                <i class="fas fa-calendar-alt"></i> {{ comm.date_publication|date:"d/m/Y H:i" }}
+            </p>
+
+            <div class="comm-actions">
+                <a href="{% url 'detail_communique' comm.pk %}" class="btn btn-view">
+                    <i class="fas fa-eye"></i> Voir détails
+                </a>
+
+                {% if request.user.role == request.user.Roles.STAFF or comm.auteur == request.user %}
+                    <a href="{% url 'modifier_communique' comm.pk %}" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                    <a href="{% url 'supprimer_communique' comm.pk %}" class="btn btn-delete">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="no-communique"><i class="fas fa-info-circle"></i> Aucun communiqué.</p>
+    {% endfor %}
+</div>
+
+<style>
+    .communique-list {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .communique-list h2 {
+        text-align: center;
+        color: #6e51cf;
+        margin-bottom: 25px;
+    }
+
+    .comm-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 3px 6px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .comm-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .comm-card h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .comm-meta {
+        color: #555;
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+    .badge-global {
+        background: #6e51cf;
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .badge-domaine {
+        background: #00b894;
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .comm-actions {
+        margin-top: 15px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        margin-right: 10px;
+        transition: background 0.3s ease;
+    }
+
+    .btn-view {
+        background: #6e51cf;
+        color: #fff;
+    }
+
+    .btn-view:hover {
+        background: #543bb7;
+    }
+
+    .btn-edit {
+        background: #00b894;
+        color: #fff;
+    }
+
+    .btn-edit:hover {
+        background: #009973;
+    }
+
+    .btn-delete {
+        background: #d63031;
+        color: #fff;
+    }
+
+    .btn-delete:hover {
+        background: #b71c1c;
+    }
+
+    .no-communique {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .btn {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}

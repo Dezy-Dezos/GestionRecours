@@ -1,0 +1,106 @@
+{% extends "jury/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .detail-container {
+        max-width: 850px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .detail-container h2 {
+        color: var(--bg--vrai);
+        text-align: center;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+    .detail-group { margin-bottom: 18px; }
+    .detail-label { font-weight: bold; color: var(--var-secondary-color); margin-bottom: 6px; display: block; }
+    .detail-value {
+        background: var(--var-bg-light);
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+    .file-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 14px; background: #2563eb; color: white;
+        border-radius: 6px; text-decoration: none; font-weight: 500;
+    }
+    .file-link:hover { background: #1d4ed8; }
+    .status {
+        display: inline-block; padding: 6px 12px; border-radius: 8px;
+        font-weight: bold; font-size: 0.9rem;
+    }
+    .status.en_attente { background: #f59e0b; color: white; }
+    .status.accepte { background: #16a34a; color: white; }
+    .status.rejete { background: #dc2626; color: white; }
+    .actions {
+        display: flex; justify-content: center; gap: 15px; margin-top: 25px;
+    }
+    .actions a {
+        padding: 8px 16px; border-radius: 8px;
+        text-decoration: none; font-weight: bold;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-back { background: #6b7280; color: white; }
+    .btn-back:hover { background: #4b5563; }
+    .btn-traiter { background: var(--bg--vrai); color: white; }
+    .btn-traiter:hover { background: #3749a6; }
+</style>
+
+<div class="detail-container">
+    <h2><i class="fas fa-file-alt"></i> Détails du recours</h2>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-user"></i> Étudiant :</span>
+        <div class="detail-value">{{ recours.etudiant.user.nom_complet }} 
+            ({{ recours.etudiant.promotion }} - {{ recours.etudiant.departement.nom }})
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-tag"></i> Objet :</span>
+        <div class="detail-value">{{ recours.objet }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-envelope"></i> Message :</span>
+        <div class="detail-value">{{ recours.message|linebreaks }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-calendar"></i> Date d’envoi :</span>
+        <div class="detail-value">{{ recours.date_envoi|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-info-circle"></i> Statut :</span>
+        <div class="detail-value">
+            <span class="status {{ recours.statut|lower }}">{{ recours.get_statut_display }}</span>
+        </div>
+    </div>
+
+   
+    <div class="detail-group">
+        <span class="detail-label"><i class="fas fa-paperclip"></i> Fichier joint :</span>
+        {% if recours.fichier %}
+        <a href="{{ recours.fichier.url }}" class="file-link" download>
+            <i class="fas fa-download"></i> Télécharger
+        </a>
+        {% else %}
+        <span>Acun fichier joint</span>
+    </div>
+    {% endif %}
+
+    <div class="actions">
+        <a href="javascript:history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> Retour</a>
+        <a href="{% url 'traiter_recours' recours.pk %}" class="btn-traiter"><i class="fas fa-gavel"></i> Traiter</a>
+    </div>
+</div>
+{% endblock %}

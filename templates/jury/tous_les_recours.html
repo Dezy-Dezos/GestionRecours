@@ -1,0 +1,146 @@
+{% extends "jury/base.html" %}
+
+{% block content %}
+
+<style>
+    h2{
+        color: var(--bg--vrai); text-align: center; margin-bottom: 2rem;
+    }
+
+    form{
+        display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    label{
+        font-weight: bold; color: var(--var-text-color-dark);
+    }
+    select{
+         padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--var-secondary-color);
+        background-color: var(--var-bg-light);
+        font-size: 1rem;
+        min-width: 180px;
+    }
+
+    table{
+        width: 100%; border-collapse: collapse; font-family: 'Segoe UI', sans-serif;
+    }
+
+    thead tr{
+        background-color: var(--bg--vrai); color: var(--var-text-color); text-align: left;
+    }
+
+    table a{
+         display: inline-block;
+                    background-color: var(--var-secondary-color);
+                    color: var(--var-text-color);
+                    padding: 6px 14px;
+                    border-radius: 6px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    font-size: 0.9rem;
+                    transition: all 0.3s ease;
+    }
+    
+</style>
+
+<h2>📂 Tous les recours de mon domaine</h2>
+
+<form method="get">
+    <label for="departement">Filtrer par département :</label>
+    <select name="departement" id="departement" onchange="this.form.submit()">
+        <option value="">-- Tous --</option>
+        {% for dep in departements %}
+            <option value="{{ dep.id }}" {% if departement_id|default:'' == dep.id|stringformat:"s" %}selected{% endif %}>
+                {{ dep.nom }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if recours %}
+<div style="overflow-x:auto;">
+<table>
+    <thead>
+        <tr >
+            <th style="padding: 12px 15px; border-radius: 8px 8px 0 0;">Étudiant</th>
+            <th style="padding: 12px 15px;">Département</th>
+            <th style="padding: 12px 15px;">Objet</th>
+            <th style="padding: 12px 15px;">Date</th>
+            <th style="padding: 12px 15px;">Statut</th>
+            <th style="padding: 12px 15px;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for r in recours %}
+        <tr style="background-color: {% cycle '#f9f9f9' '#fff' %}; transition: background 0.3s;">
+            <td style="padding: 10px 15px;">{{ r.etudiant.user.nom_complet }}</td>
+            <td style="padding: 10px 15px;">{{ r.etudiant.promotion }} - {{ r.etudiant.departement.nom }}</td>
+            <td style="padding: 10px 15px;">{{ r.objet }}</td>
+            <td style="padding: 10px 15px;">{{ r.date_envoi|date:"d/m/Y H:i" }}</td>
+            <td style="padding: 10px 15px;">{{ r.get_statut_display }}</td>
+            <td style="padding: 10px 15px;">
+    <!-- Lien détail -->
+                <a href="{% url 'detail_recours_jury' r.pk %}" 
+                title="Voir détails"
+                style="margin-right:6px; background:#2563eb;" 
+                onmouseover="this.style.background='#1d4ed8'" 
+                onmouseout="this.style.background='#2563eb'">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+
+                <!-- Lien traiter -->
+                <a href="{% url 'traiter_recours' r.pk %}" 
+                style=""
+                onmouseover="this.style.background='#5a3ed9'" 
+                onmouseout="this.style.background='var(--var-secondary-color)'">
+                    Traiter
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<p style="text-align: center; color: var(--unim--1); font-weight: bold; font-size: 1.2rem; margin-top: 3rem;">
+    Aucun recours trouvé.
+</p>
+{% endif %}
+
+<!-- Styles responsive -->
+<style>
+@media screen and (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    tr {
+        margin-bottom: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #fff !important;
+    }
+    th {
+        display: none;
+    }
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-bottom: 1px solid #eee;
+    }
+    td:last-child {
+        justify-content: flex-start;
+        gap: 10px;
+    }
+    td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--var-secondary-color);
+        flex-basis: 45%;
+    }
+}
+</style>
+
+{% endblock %}

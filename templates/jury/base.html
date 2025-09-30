@@ -1,0 +1,374 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIM - Jury</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<!-- Bloc messages Django -->
+{% if messages %}
+<div id="django-messages" style="
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+">
+    {% for message in messages %}
+        <div class="toast {{ message.tags }}" style="
+            background-color: {% if message.tags == 'error' %}#ff4d4d{% else %}#4CAF50{% endif %};
+            color: white; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            min-width: 250px;
+            text-align: center;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    const toasts = document.querySelectorAll('#django-messages .toast');
+    toasts.forEach((t) => {
+        setTimeout(() => {
+            t.style.transition = "opacity 0.5s, transform 0.5s";
+            t.style.opacity = "0";
+            t.style.transform = "translateY(-20px)";
+            setTimeout(() => t.remove(), 500);
+        }, 5000);
+    });
+</script>
+{% endif %}
+
+<style>
+html {
+    --var-secondary-color: #6e51cf;
+    --var-text-color: #fff;
+    --var-text-color-dark: #333;
+    --var-bg-light: #f0f4ff;
+    --var-bg-dark: #d3c9f3;
+    --unim--1: rgb(160, 8, 8);
+    --bg--vrai: rgb(92, 147, 248);
+}
+body {
+    background: var(--var-bg-light);
+    color: var(--var-text-color-dark);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* === SIDEBAR === */
+#side_bar {
+    background-color: var(--bg--vrai);
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transition: width .3s ease;
+    border-radius: 0 5px 5px 0;
+    overflow-x: hidden;
+}
+#side_bar.collapsed {
+    width: 60px;
+}
+#side_bar .liens {
+    margin-top: 80px;
+    flex: 1;
+}
+#side_bar .liens a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--var-text-color);
+    padding: 1rem;
+    border-radius: 6px;
+    transition: background .3s;
+    font-size: 16px;
+}
+#side_bar .liens a:hover {
+    background: rgba(0,0,0,0.2);
+}
+#side_bar.collapsed .liens .text {
+    display: none;
+}
+#side_bar.collapsed .liens i {
+    margin: auto;
+}
+
+/* === HEADER === */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg--vrai);
+    padding: 10px 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+header .left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+header .logo img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--var-text-color);
+}
+header .logo a {
+    text-decoration: none;
+    color: var(--unim--1);
+    font-weight: bold;
+    font-size: 1.3em;
+}
+.burger {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+}
+.burger span {
+    width: 25px;
+    height: 3px;
+    background: var(--var-text-color);
+    border-radius: 3px;
+}
+
+/* Profil + notifications */
+header .right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profil-menu {
+    position: relative;
+}
+.profil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--var-text-color);
+    text-decoration: none;
+}
+.profil img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--var-text-color-dark);
+}
+.profil span {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+.profil span b {
+    font-size: 15px;
+}
+.profil-menu .dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: var(--var-bg-light);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    min-width: 150px;
+    z-index: 100;
+}
+.profil-menu .dropdown a {
+    display: block;
+    padding: 10px;
+    color: var(--var-text-color-dark);
+    text-decoration: none;
+    font-size: 14px;
+}
+.profil-menu .dropdown a:hover {
+    background: var(--var-bg-dark);
+}
+.profil-menu:hover .dropdown {
+    display: block;
+}
+
+/* === CONTENT === */
+.content {
+    transition: margin-left .3s ease;
+    margin-left: 220px;
+    padding: 1rem;
+    min-height: 80vh;
+    margin-top: 4.5rem;
+}
+#side_bar.collapsed ~ .content {
+    margin-left: 60px;
+}
+
+/* === FOOTER === */
+footer {
+    transition: margin-left .3s ease;
+    margin-left: 220px;
+    padding: 1rem;
+    text-align: center;
+    font-size: 14px;
+    color: var(--var-text-color);
+    background-color: var(--var-text-color-dark);
+}
+#side_bar.collapsed ~ footer {
+    margin-left: 60px;
+}
+
+/* Badge notification */
+.notif-link {
+    position: relative;
+    display: inline-block;
+    color: var(--var-text-color);
+    font-size: 20px;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #dc2626;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    line-height: 1;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+/* Animation pop */
+.pop {
+    animation: popBadge 0.5s ease-out;
+}
+
+@keyframes popBadge {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.4); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.notif-badge:hover {
+    transform: scale(1.2);
+    background: #b91c1c;
+}
+
+@media screen and (max-width: 768px) {
+    .notif-badge {
+        top: -3px;
+        right: -6px;
+        font-size: 10px;
+        padding: 2px 5px;
+        min-width: 18px;
+        height: 18px;
+    }
+}
+</style>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="left">
+            <div class="logo">
+                <img src="{% static 'logo.jpg' %}" alt="Logo">
+                <a href="{% url 'dashboard_redirect' %}">UNIM-Recours</a>
+            </div>
+            <div class="burger" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="right">
+            <a href="{% url 'mes_notifications' %}" class="notif-link">
+                <i class="fas fa-bell"></i>
+                {% if notif_count > 0 %}
+                    <span class="notif-badge pop">{{ notif_count }}</span>
+                {% endif %}
+            </a>
+            
+            <div class="profil-menu">
+                <a href="#" class="profil">
+                    {% if user.jury_profile.photo_profil %}
+                        <img src="{{ user.jury_profile.photo_profil.url }}" alt="Profil">
+                    {% else %}
+                        <img src="{% static 'icons/etu.webp' %}" alt="">
+                    {% endif %}
+                    <span>
+                        <b>{{ user.nom_complet }}</b>
+                        <i>{{ user.jury_profile.fonction }} - {{ user.jury_profile.domaine.nom }}</i>
+                    </span>
+                </a>
+                <div class="dropdown">
+                    <a href="#">👤 Voir profil</a>
+                    <a href="{% url 'logout' %}">🚪 Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div id="side_bar">
+        <div class="liens">
+            <a href="{% url 'dashboard_redirect' %}"><i class="fas fa-home"></i><span class="text">Accueil</span></a>
+            <a href="{% url 'creer_delais' %}"><i class="fas fa-clock"></i><span class="text">Créer un délai</span></a>
+            <a href="{% url 'tous_les_recours' %}"><i class="fas fa-folder-open"></i><span class="text">Tous les recours</span></a>
+            <a href="{% url 'mes_notifications' %}" class="notif-link">
+                <i class="fas fa-bell"></i><span class="text">Notifications</span>
+                {% if notif_count > 0 %}
+                    <span class="notif-badge pop">{{ notif_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'ajouter_communique' %}"><i class="fas fa-bullhorn"></i><span class="text">Communiqué</span></a>
+            <a href="#"><i class="fas fa-envelope"></i><span class="text">Messages</span></a>
+            <a href="#"><i class="fas fa-info-circle"></i><span class="text">À propos</span></a>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Tout droit réservé © Dezy-Project 2025</p>
+    </footer>
+
+    <script>
+    function toggleMenu() {
+        document.getElementById("side_bar").classList.toggle("collapsed");
+    }
+    </script>
+</body>
+</html>
